@@ -81,14 +81,10 @@ def new_row():
 
 @app.post("/undo")
 def undo():
-    """ API equivalent of `undo_command()` """
-    crochet_model.undo()
-    return {
-        "message": "Undo last action.",
-        "row_count": crochet_model.get_row_count(),
-        "stitch_count": crochet_model.get_stitch_count(),
-        "stitch_options": ["Single", "Double", "Half-Double", "Slip"] if crochet_model.get_row_count() > 1 else ["Chain"]
-    }
+    response = crochet_model.undo()  # Ensure correct response is returned
+    return response
+
+
 
 
 @app.post("/redo")
@@ -105,14 +101,21 @@ def redo():
 
 @app.post("/clear_pattern")
 def clear_pattern():
-    """ API equivalent of `clear_command()` """
-    crochet_model.clearPattern()
+    """ Reinitialize Crochet Model without losing reference """
+    print("🔄 Clearing pattern...")
+    crochet_model.clearPattern()  # Reset the model properly
+
+    print("✅ Pattern reset completed. Returning response...")
     return {
         "message": "Pattern cleared.",
-        "row_count": 0,
-        "stitch_count": 0,
+        "row_count": crochet_model.get_row_count(),
+        "stitch_count": crochet_model.get_stitch_count(),
         "stitch_options": ["Chain"]
     }
+
+
+
+
 
 
 @app.get("/get_counts")
@@ -130,11 +133,26 @@ def get_max_length():
     return {"max_length": crochet_model.get_max_length()}
 
 
+from fastapi.responses import FileResponse
+
 @app.get("/render_pattern")
 def render_pattern():
     """ API equivalent of `update_image()` """
-    crochet_model.build()
-    return FileResponse(os.getcwd() + "/models/assets/model.png", media_type="image/png")
+    print("🔄 Rendering pattern...")
+
+    try:
+        crochet_model.build()  # Ensure model is rebuilt
+        png_path = os.getcwd() + "/models/assets/model.png"
+
+        if not os.path.exists(png_path):
+            print("❌ PNG file not found! Rendering might have failed.")
+
+        return FileResponse(png_path, media_type="image/png")
+
+    except Exception as e:
+        print(f"❌ Error rendering pattern: {e}")
+        return JSONResponse(status_code=500, content={"message": str(e)})
+
 
 
 @app.get("/generate_written_pattern")
