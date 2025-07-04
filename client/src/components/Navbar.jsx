@@ -66,22 +66,6 @@ const Navbar = () => {
         </li>
         <li
           className={`md:px-4 md:py-2 cursor-pointer ${
-            location.pathname === "/basics" ? "text-[#F4AFAB]" : "hover:text-[#f9d4d2]"
-          }`}
-          onClick={() => navigate("/basics")}
-        >
-          Basics
-        </li>
-        <li
-          className={`md:px-4 md:py-2 cursor-pointer ${
-            location.pathname === "/chart" ? "text-[#F4AFAB]" : "hover:text-[#f9d4d2]"
-          }`}
-          onClick={() => navigate("/chart")}
-        >
-          Chart
-        </li>
-        <li
-          className={`md:px-4 md:py-2 cursor-pointer ${
             location.pathname === "/row-counter" ?"text-[#F4AFAB]" : "hover:text-[#f9d4d2]"
           }`}
           onClick={() => navigate("/row-counter")}
@@ -106,17 +90,17 @@ const Navbar = () => {
         </li>
         <li
           className={`md:px-4 md:py-2 cursor-pointer ${
-            location.pathname === "/pattern-visualize" ? "text-[#F4AFAB]" : "hover:text-[#f9d4d2]"
+            location.pathname === "/new-pattern" ? "text-[#F4AFAB]" : "hover:text-[#f9d4d2]"
           }`}
-          onClick={() => navigate("/pattern-visualize")}
+          onClick={() => navigate("/new-pattern")}
         >
           Create Patterns
         </li>
         <li
           className={`md:px-4 md:py-2 cursor-pointer ${
-            location.pathname === "/view-patterns" ? "text-[#F4AFAB]" : "hover:text-[#f9d4d2]"
+            location.pathname === "/view-user-patterns" ? "text-[#F4AFAB]" : "hover:text-[#f9d4d2]"
           }`}
-          onClick={() => navigate("/view-patterns")}
+          onClick={() => navigate("/view-user-patterns")}
         >
           View Patterns
         </li>

@@ -109,12 +109,12 @@ const ResetPassword = () => {
       )}
       {/*OTP form*/}
       {!isOtpSubmited && isEmailSent && (
-        <form onSubmit = {onSubmitOtp}className="bg-slate-900 p-8 rounded-lg shadow-lg w-96 text-sm">
+        <form onSubmit = {onSubmitOtp}className="bg-[#ecb3b3] p-8 rounded-lg shadow-lg w-96 text-sm">
           <h1 className="text-white text-2xl font-semibold text-center mb-4">
             Reset Password OTP
           </h1>
-          <p className="text-center mb-6 text-indigo-300">
-            Enter the 6-digit code to your email id.
+          <p className="text-center mb-6 text-[#F7EDF0]">
+            Enter the 6-digit code from your email id.
           </p>
           <div className="flex justify-between mb-8" onPaste={handlePaste}>
             {Array(6)
@@ -125,39 +125,39 @@ const ResetPassword = () => {
                   maxLength="1"
                   key={index}
                   required
-                  className="w-12 h-12 bg-[#333A5C] text-white text-center text-xl rounded-md"
+                  className="w-12 h-12 bg-[#F7EDF0] text-[#ecb3b3] text-center text-xl rounded-md"
                   ref={(e) => (inputRefs.current[index] = e)}
                   onInput={(e) => handleInput(e, index)}
                   onKeyDown={(e) => handleKeyDown(e, index)}
                 />
               ))}
           </div>
-          <button className="w-full text-white py-2.5 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-900">
+          <button className="w-full text-white py-2.5 rounded-full bg-gradient-to-r from-[#f08080] to-[#f4978e] mt-3">
             Submit
           </button>
         </form>
       )}
       {/*New password form*/}
       {isOtpSubmited && isEmailSent && (
-        <form onSubmit={onSubmitNewPassword} className="bg-slate-900 p-8 rounded-lg shadow-lg w-96 text-sm">
+        <form onSubmit={onSubmitNewPassword} className="bg-[#ecb3b3] p-8 rounded-lg shadow-lg w-96 text-sm">
           <h1 className="text-white text-2xl font-semibold text-center mb-4">
             New Password
           </h1>
-          <p className="text-center mb-6 text-indigo-300">
+          <p className="text-center mb-6 text-[#F7EDF0]">
             Enter the new password below
           </p>
-          <div className="mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-[#333A5C]">
+          <div className="mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-[#F7EDF0]">
             <img src={assets.lock_icon} alt="" className="w-3 h-3" />
             <input
               type="password"
               placeholder="Password"
-              className="bg-transparent outline-none text-white"
+              className="bg-transparent outline-none text-[#ecb3b3]"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               required
             />
           </div>
-          <button className="w-full text-white py-2.5 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-900 mt-3">
+          <button className="w-full text-white py-2.5 rounded-full bg-gradient-to-r from-[#f08080] to-[#f4978e] mt-3">
             Submit
           </button>
         </form>

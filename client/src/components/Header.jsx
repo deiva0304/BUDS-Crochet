@@ -30,7 +30,7 @@ const Header = () => {
         make it easier to track your progress. Join us and be part of a space
         where creativity, learning, and community come together.
       </p>
-      <span onClick={()=> navigate('/pattern-visualize')} className="border border-gray-500 rounded-full px-8 py-2.5 hover:bg-gray-100 transition-all">
+      <span onClick={()=> navigate('/explore-patterns')} className="border border-gray-500 rounded-full px-8 py-2.5 hover:bg-gray-100 transition-all">
         Get Started
       </span>
     </div>

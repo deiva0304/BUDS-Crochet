@@ -3,7 +3,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from models.CrochetModel import CrochetModel
 from pydantic import BaseModel
+import base64
+from bson.objectid import ObjectId  # Import ObjectId for MongoDB
 import os
+from datetime import datetime
+from database import users_collection  # Import MongoDB connection
+from database import patterns_collection  # Import MongoDB patterns collection
+
 
 app = FastAPI()
 
@@ -113,11 +119,6 @@ def clear_pattern():
         "stitch_options": ["Chain"]
     }
 
-
-
-
-
-
 @app.get("/get_counts")
 def get_counts():
     """ API equivalent of updating row and stitch counts """
@@ -137,22 +138,22 @@ from fastapi.responses import FileResponse
 
 @app.get("/render_pattern")
 def render_pattern():
-    """ API equivalent of `update_image()` """
-    print("🔄 Rendering pattern...")
-
+    """ API to generate the crochet pattern image and return as Base64 """
     try:
-        crochet_model.build()  # Ensure model is rebuilt
-        png_path = os.getcwd() + "/models/assets/model.png"
+        crochet_model.build()
+        image_path = os.getcwd() + "/models/assets/model.png"
 
-        if not os.path.exists(png_path):
-            print("❌ PNG file not found! Rendering might have failed.")
+        if not os.path.exists(image_path):
+            return JSONResponse(status_code=404, content={"message": "Pattern image not found."})
 
-        return FileResponse(png_path, media_type="image/png")
+        # Convert image to Base64
+        with open(image_path, "rb") as image_file:
+            base64_image = base64.b64encode(image_file.read()).decode("utf-8")
+
+        return {"imageBase64": base64_image}
 
     except Exception as e:
-        print(f"❌ Error rendering pattern: {e}")
         return JSONResponse(status_code=500, content={"message": str(e)})
-
 
 
 @app.get("/generate_written_pattern")
@@ -160,3 +161,42 @@ def generate_written_pattern():
     """ API equivalent of `create_command()` """
     written_pattern = crochet_model.generate_written_pattern()
     return {"written_pattern": written_pattern}
+
+
+class SavePatternRequest(BaseModel):
+    email: str  # Identify user
+    patternId: str = None  # Optional (for updates)
+    patternName: str
+    instructions: str
+    imageBase64: str
+
+# ✅ Define Request Model for Updating Pattern Visualization & Instructions
+class UpdatePatternRequest(BaseModel):
+    patternId: str  # Unique pattern ID
+    imageBase64: str  # Updated visualization (Base64)
+    instructions: str  # Updated instructions
+
+@app.put("/update_pattern")
+def update_pattern(request: UpdatePatternRequest):
+    """ API to update visualization & instructions in the `patterns` collection. """
+    try:
+        # Convert patternId to ObjectId
+        pattern_object_id = ObjectId(request.patternId)
+
+        # Find and update the pattern in `patterns` collection
+        result = patterns_collection.update_one(
+            {"_id": pattern_object_id},  # Find pattern by ID
+            {"$set": {
+                "instructions": request.instructions,
+                "imageBase64": request.imageBase64,
+                "updatedAt": datetime.utcnow()
+            }}
+        )
+
+        if result.modified_count > 0:
+            return {"message": "Pattern visualization & instructions updated successfully."}
+        else:
+            return JSONResponse(status_code=404, content={"message": "Pattern not found."})
+
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"message": str(e)})
